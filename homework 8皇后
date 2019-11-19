@@ -1,53 +1,31 @@
-
-# coding: utf-8
-
-# In[27]:
-
-
+#這是在網路上找到的python 的八皇后問題的算法 
+我在理解後並對即作註解
 import random
 import matplotlib.pyplot as plt
 a=[]
 b=[]
 c=[]
 d=[]
-e=[]
-f=[]
-g=[]
-h=[]
-size=16
-size = int(size)
-def initState(a):
-    while len(a)<size:
-        a.append(random.randint(1,size))
+def initState(a):   #給a~d一個初始直
+    while len(a)<8:
+        a.append(random.randint(1,8))
     return a
-def chooseParent(a,b,c,d):
+def chooseParent(a,b,c,d):  #界適應值來選取父母親
     parent=[]
     stack=[]
     stack.append(a)
     stack.append(b)
     stack.append(c)
     stack.append(d)
-    stack.append(e)
-    stack.append(f)
-    stack.append(g)
-    stack.append(h)
     fitnessValue=fitnessFunc(stack)
-    sort=sorted(fitnessValue.items(),key=lambda e:e[1],reverse=True)
+    sort=sorted(fitnessValue.items(),key=lambda e:e[1],reverse=True) ##適應值越大 排越前
     if sort[0][0]=='a':
         firstFather=a
     elif sort[0][0]=='b':
         firstFather=b
     elif sort[0][0]=='c':
         firstFather=c
-    elif sort[0][0]=='d':
-        firstFather=d
-    elif sort[0][0]=='e':
-        firstFather=e
-    elif sort[0][0]=='f':
-        firstFather=f
-    elif sort[0][0]=='g':
-        firstFather=g
-    else:firstFather=h
+    else:firstFather=d
  
     parent.append(firstFather)
  
@@ -57,15 +35,7 @@ def chooseParent(a,b,c,d):
         firstMother=b
     elif sort[1][0]=='c':
         firstMother=c
-    elif sort[1][0]=='d':
-        firstMother=d
-    elif sort[1][0]=='e':
-        firstMother=e
-    elif sort[1][0]=='f':
-        firstMother=f
-    elif sort[1][0]=='g':
-        firstMother=g
-    else:firstMother=h
+    else:firstMother=d
  
     parent.append(firstMother)
  
@@ -78,50 +48,35 @@ def chooseParent(a,b,c,d):
         secondMother=b
     elif sort[2][0]=='c':
         secondMother=c
-    if sort[2][0]=='d':
-        secondMother=d
-    elif sort[2][0]=='e':
-        secondMother=e
-    elif sort[2][0]=='f':
-        secondMother=f
-    elif sort[2][0]=='g':
-        secondMother=g
-    else:secondMother=h
+    else:secondMother=d
  
     parent.append(secondMother)
  
     return parent
-
-size2 = size/2
-size2 = int(size2)
-
  
-def fitnessFunc(myList):
+def fitnessFunc(myList):     #如果同一列 或桐一斜線 fitnessindex 就-1
     fitnessIndex=[28,28,28,28]
-    for c in range(0,size2):
-        for i in range(0,size-1):
-            for n in range(i+1,size):
+    #print(myList)
+    
+    for c in range(0,4):
+        for i in range(0,7):
+            for n in range(i+1,8):
                 if myList[c][i]==myList[c][n]:
                     fitnessIndex[c]-=1
                 if myList[c][i]+n-i==myList[c][n] or myList[c][i]-n+i==myList[c][n]:
                     fitnessIndex[c]-=1
-    fitnessDict={'a':fitnessIndex[0],'b':fitnessIndex[1],'c':fitnessIndex[2],'d':fitnessIndex[3],'e':fitnessIndex[4],'f':fitnessIndex[5],'g':fitnessIndex[6],'h':fitnessIndex[7] }
-    print(fitnessDict)
+    fitnessDict={'a':fitnessIndex[0],'b':fitnessIndex[1],'c':fitnessIndex[2],'d':fitnessIndex[3]}
     return fitnessDict
  
  
  
-def crossOver(myList):
+def crossOver(myList):      #父與母 隨機作交互交換
     newList=[]
-    crossPoint=random.randint(1,size-1)
+    crossPoint=random.randint(1,7)
     ff=myList[0]
     fm=myList[1]
     sf=myList[2]
     sm=myList[3]
-    aa=myList[4]
-    aa2=myList[5]
-    aa3=myList[6]
-    aa4=myList[7]
  
     fchild1=ff[0:crossPoint]
     fchild1.extend(fm[crossPoint:])
@@ -140,22 +95,22 @@ def crossOver(myList):
     newList.append(schild1)
     newList.append(schild2)
     return newList
-def mutationPoint():
-    mPoint=random.randint(0,size)
+def mutationPoint():                  #隨機找一個位置
+    mPoint=random.randint(0,8)
     return mPoint
-def mutationNumber():
-    mNumber=random.randint(1,size)
+def mutationNumber():                 #隨機找一個1~7的位置
+    mNumber=random.randint(1,8)
     return mNumber
-def mutation(myList):
+def mutation(myList):                #變異
  
     childMutationList=[]
     fc1_mPoint=mutationPoint()
     fc1_mNumber=mutationNumber()
-    fchild1=myList[0]
+    fchild1=myList[0]              #位置是0的話就不變
     if fc1_mPoint==0:
         fchild1_m=fchild1
     else:
-        fchild1_m=fchild1
+        fchild1_m=fchild1          #(mutationPoint-1)位置  換成 fc1_mNumber
         fchild1_m[fc1_mPoint-1]=fc1_mNumber
  
     fc2_mPoint=mutationPoint()
@@ -184,8 +139,9 @@ def mutation(myList):
     else:
         schild2_m=schild2
         schild2_m[sc2_mPoint-1]=sc2_mNumber
+ #把最後得到的都放進childMutationList
  
-    childMutationList.append(fchild1_m)
+    childMutationList.append(fchild1_m)  
     childMutationList.append(fchild2_m)
     childMutationList.append(schild1_m)
     childMutationList.append(schild2_m)
@@ -193,25 +149,20 @@ def mutation(myList):
  
  
  
-print(initState(a))
-print(initState(b))
-print(initState(c))
-print(initState(d))
-parent=chooseParent(a,b,c,d)
-# print(parent)
-
-
-# In[25]:
-
+initState(a)
+initState(b)
+initState(c)
+initState(d)
+parent=chooseParent(a,b,c,d)  #選父母
 
 answer=[]
 asumeCount=0
 while(True):
-    crossParent=crossOver(parent)
-    mutationParent=mutation(crossParent)
-    newFitDict=fitnessFunc(mutationParent)
+    crossParent=crossOver(parent)   #交互交換
+    mutationParent=mutation(crossParent)     #變異
+    newFitDict=fitnessFunc(mutationParent)    
     asumeCount+=1
-    if newFitDict['a']==28 or newFitDict['b']==28 or newFitDict['c']==28 or newFitDict['d']==28:
+    if newFitDict['a']==28 or newFitDict['b']==28 or newFitDict['c']==28 or newFitDict['d']==28:      #如果=28即完美解
         if newFitDict['a']==28:
             answer.append(mutationParent[0])
         if newFitDict['b']==28:
@@ -221,22 +172,21 @@ while(True):
         if newFitDict['d']==28:
             answer.append(mutationParent[3])
         print("I find it! The answer is {0}".format(answer))
-#        print("I did {0} cycle to find it".format(asumeCount))
-#        for i in answer:
-#            pointA=i.index(1)+1
- #           pointB=i.index(2)+1
-#            pointC=i.index(3)+1
- #           pointD=i.index(4)+1
-#            pointE=i.index(5)+1
-#            pointF=i.index(6)+1
- #           pointG=i.index(7)+1
-#            pointH=i.index(8)+1
- #           x=[1,2,3,4,5,6,7,8]
-#            y=[pointA,pointB,pointC,pointD,pointE,pointF,pointG,pointH]
- #           plt.axis([0,9,0,9])
-#            plt.plot(x,y, '*')
-#            plt.show()
+        print("I did {0} cycle to find it".format(asumeCount))
+        for i in answer:            #畫圖
+            pointA=i.index(1)+1
+            pointB=i.index(2)+1
+            pointC=i.index(3)+1
+            pointD=i.index(4)+1
+            pointE=i.index(5)+1
+            pointF=i.index(6)+1
+            pointG=i.index(7)+1
+            pointH=i.index(8)+1
+            x=[1,2,3,4,5,6,7,8]
+            y=[pointA,pointB,pointC,pointD,pointE,pointF,pointG,pointH]
+            plt.axis([0,9,0,9])
+            plt.plot(x,y, '*')
+            plt.show()
  
-#        break
+        break
     else:parent=mutationParent
-
